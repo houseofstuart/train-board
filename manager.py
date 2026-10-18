@@ -5,7 +5,7 @@ class Manager:
         self.board_array = board_array
         self.letters = self.get_csv('resources/letters.csv')
         self.current = None
-        self.text_array = None
+        self.text_data = None # Current text data
         self.clock = 0
 
     def tick(self):
@@ -13,14 +13,22 @@ class Manager:
         self.clock += 1
         self.board_array = np.zeros((70, 15)) #start from column 70 and move to 0 
 
-        text_start = (70 - self.clock)
-        if text_start < -(len(self.text_array)):
-            return #moved all the way left
+        if self.clock >= self.text_data["full_pass_duration"]:
+            self.text_data = None
+            self.current = None
+            return
+
+        sub_start = 0
+        current_start = (70 - self.clock)
+        if current_start < 0:
+            sub_start = abs(current_start)
+            current_start = 0
+
+
         i = 0
-        for column in range(text_start, text_start+len(self.text_array)):
-            if column >= 70:
-                break
-            self.board_array[column][-(1+len(self.text_array[i])):-1] = self.text_array[i]
+        upper_bound = min(70, current_start + (self.text_data["length"] - sub_start))
+        for column in range(current_start, upper_bound):
+            self.board_array[column][-(1+len(self.text_data["array"][sub_start + i])):-1] = self.text_data["array"][sub_start + i]
             i += 1
         
 
@@ -46,11 +54,9 @@ class Manager:
         text = self.current.text.casefold()
         text_array = []
         text_binary_array = []
-        total_length = 0
         for letter in text:
             letter_data = self.ret_let_data(letter)
             text_array.append(letter_data)
-            total_length += letter_data["width"]
             for y in range(letter_data['width']):
                 sub_binary = []
                 for x in range(len(letter_data['binary'])):
@@ -58,12 +64,11 @@ class Manager:
                         sub_binary.append(letter_data['binary'][x])
                 text_binary_array.append(sub_binary)
             text_binary_array.append(self.ret_let_data('letter_gap')['binary'])
-        self.text_array = text_binary_array
-
-                
-
-        
-
+        self.text_data = {
+            "array": text_binary_array,
+            "length": len(text_binary_array),
+            "full_pass_duration": 70 + len(text_binary_array)
+        }
 
 
     def ret_let_data(self, letter):
@@ -81,6 +86,10 @@ class Manager:
         return self.board_array
     def get_csv(self, file_path):
         return pd.read_csv(file_path, dtype=str)
+    def get_ended_status(self):
+        if self.current is None:
+            return True
+        else: return False
 
     def set_announcement(self, announcement):
         self.current = announcement

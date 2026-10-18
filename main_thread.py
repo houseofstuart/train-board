@@ -31,7 +31,9 @@ def announcement_worker(announcement_queue: queue, board):
         else:
             board_manager.tick()
             board.display_data(board_manager.get_board_array())
-        time.sleep(0.1)
+            if board_manager.get_ended_status():
+                current_ann = None
+        time.sleep(0.05)
 
 
 def main():
