@@ -25,12 +25,7 @@ class Board:
 
 
     def display_data(self, board_array):
-        self.clear_board()
-        for x, column in enumerate(board_array):
-            for y, value in enumerate(column):
-                if value == 1:
-                    self.canvas.itemconfig(self.board[y][x], fill='#FF9A2E')
-        self.empty = False
+        pass
 
     def clear_board(self):
         if self.empty:
@@ -41,7 +36,6 @@ class Board:
         self.empty = True
 
 
-    
     #Draw all squares onto board
     def draw_board(self):
         for y in range(self.n_rows):
@@ -66,42 +60,5 @@ class Board:
 
 
 
-    def draw_letter(self, letter: str):
-        self.clear_board()
-        letter_row = self.letters.loc[self.letters['letter'] == letter]
-        if(letter_row.empty):
-            print(f'The {letter} key has not been implemented yet.')
-        else:
-            letter_binary = letter_row['box_on'].values[0]
-            box = letter_row['box'].values[0].split("*")
-            letter_width = int(box[0])
-            letter_height = int(box[1])
 
-            i = 0
-            y0 = self.n_rows - letter_height
-            x0 = self.n_columns - 4
 
-            width = letter_width
-            if (x0 + width) >= 70:
-                width = self.n_columns - x0
-
-            for y in range(letter_height):
-                for x in range(width):
-                    if(letter_binary[(y * letter_width) + x] == '1'):
-                        self.canvas.itemconfig(self.board[y0+y][x0+x], fill='#FF9A2E')
-                    i += 1
-            self.empty = False
-
-    def display_announcement(self, announcement: Announcement):
-        self.clear_board()
-        letter_row = self.letters.loc[self.letters['letter'] == announcement.text]
-        if(letter_row.empty):
-            print(f'The {announcement.text} key has not been implemented yet.')
-            return
-        
-        box = letter_row['box'].values[0].split("*")
-        letter_data = {
-            'binary': letter_row['box_on'].values[0],
-            'width': int(box[0]),
-            'height': int(box[1])
-        }
