@@ -3,14 +3,14 @@ import pandas as pd, numpy as np
 class Manager:
     def __init__(self, board_array):
         self.board_array = board_array
-        self.letters = self.get_csv('resources/letters.csv')
+        self.upper_letters = self.get_csv('resources/letters_upper.csv')
+        self.lower_letters = self.get_csv('resources/letters_lower.csv')
         self.current = None
         self.text_data = None # Current text data
         self.clock = 0
 
     def tick(self):
         # Update the board - all binary data in self.text_array
-        print("ticking")
         self.clock += 1
         self.board_array = np.zeros((70, 15)) #start from column 70 and move to 0 
 
@@ -24,7 +24,6 @@ class Manager:
         if current_start < 0:
             sub_start = abs(current_start)
             current_start = 0
-
 
         i = 0
         upper_bound = min(70, current_start + (self.text_data["length"] - sub_start))
@@ -52,7 +51,7 @@ class Manager:
 
 
     def start_display(self):
-        text = self.current.text.casefold()
+        text = self.current.text
         text_array = []
         text_binary_array = []
         for letter in text:
@@ -74,7 +73,10 @@ class Manager:
 
     def ret_let_data(self, letter):
         if letter ==  " ": letter = 'space'
-        letter_row = self.letters.loc[self.letters['letter'] == letter]
+        if letter.isupper(): 
+            letter_row = self.upper_letters.loc[self.upper_letters['letter'] == letter]
+        else: 
+            letter_row = self.lower_letters.loc[self.lower_letters['letter'] == letter]
         letter_box = letter_row['box'].values[0].split('*')
         return {
             'binary': letter_row['box_on'].values[0],

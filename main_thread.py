@@ -13,7 +13,6 @@ def read_entry(input, movement, entry, queue):
         #Create announcement and enqueue it
         movement = movement.get()
         static = True if movement == "Static" else False
-        print("Static = ", static)
         new_announcement = Announcement(text, static)
         queue.put(new_announcement)
         entry.delete(0, tk.END)
