@@ -25,7 +25,12 @@ class Board:
 
 
     def display_data(self, board_array):
-        pass
+        self.clear_board()
+        for x, column in enumerate(board_array):
+            for y, value in enumerate(column):
+                if value == 1:
+                    self.canvas.itemconfig(self.board[y][x], fill='#FF9A2E')
+        self.empty = False
 
     def clear_board(self):
         if self.empty:

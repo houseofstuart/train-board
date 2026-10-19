@@ -10,6 +10,7 @@ class Manager:
 
     def tick(self):
         # Update the board - all binary data in self.text_array
+        print("ticking")
         self.clock += 1
         self.board_array = np.zeros((70, 15)) #start from column 70 and move to 0 
 
