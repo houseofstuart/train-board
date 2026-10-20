@@ -1,5 +1,5 @@
-import pandas as pd, numpy as np
 
+import pandas as pd, numpy as np
 class Manager:
     def __init__(self, board_array):
         self.board_array = board_array
@@ -12,11 +12,11 @@ class Manager:
     def tick(self):
         # Update the board - all binary data in self.text_array
         self.clock += 1
-        self.board_array = np.zeros((70, 15)) #start from column 70 and move to 0 
-
         if self.clock >= self.text_data["full_pass_duration"]:
             self.text_data = None
             self.current = None
+            return
+        if self.current.static:
             return
 
         sub_start = 0
@@ -25,6 +25,7 @@ class Manager:
             sub_start = abs(current_start)
             current_start = 0
 
+        self.board_array = np.zeros((70, 15)) #start from column 70 and move to 0 
         i = 0
         upper_bound = min(70, current_start + (self.text_data["length"] - sub_start))
         for column in range(current_start, upper_bound):
@@ -48,6 +49,10 @@ class Manager:
                 self.board_array[base + inner_base][-(1+data['height']):-1] = binary_column
                 inner_base += 1
             base += (data['width'] + 1)
+
+        self.text_data = {
+            "full_pass_duration": 100
+        }
 
 
     def start_display(self):
